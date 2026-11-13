@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Pembelajaran Kelas 6 - SD Negeri 1 Malebo (2026/2027)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F6FA;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
+        }
+        .header-gradient {
+            background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 60%, #6366F1 100%);
+        }
+        .card-hover {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+        }
+        .card-hover:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Custom Modal Container -->
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div id="modal-content" class="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl transform transition-all">
+            <!-- Modal dynamic content injected here -->
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER (Centered Mobile/Tablet/Desktop Container) -->
+    <div class="w-full max-w-4xl mx-auto bg-[#F8FAFC] min-h-screen shadow-xl flex flex-col relative pb-24">
+
+        <!-- TOP HEADER (Mirrors Reference Image) -->
+        <header class="header-gradient text-white pt-6 pb-12 px-5 sm:px-8 rounded-b-[2.2rem] shadow-lg relative overflow-hidden">
+            <!-- Decorative circles -->
+            <div class="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="absolute top-20 -left-10 w-32 h-32 bg-indigo-400/20 rounded-full blur-lg pointer-events-none"></div>
+
+            <!-- Top Bar: Menu, Title, Notification, Avatar -->
+            <div class="flex items-center justify-between relative z-10">
+                <div class="flex items-center gap-3">
+                    <button onclick="openRoleSwitcher()" class="p-2 rounded-xl bg-white/15 hover:bg-white/25 transition active:scale-95" title="Ganti Peran / Login">
+                        <i data-lucide="menu" class="w-6 h-6 text-white"></i>
+                    </button>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Student Portal</h1>
+                            <span id="role-badge" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-400 text-slate-900 shadow-sm">
+                                Mode Siswa
+                            </span>
+                        </div>
+                        <p class="text-xs text-indigo-100 font-medium">Kelas 6 • SD Negeri 1 Malebo • TA 2026/2027</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <!-- Notification Bell -->
+                    <button onclick="navigateTo('notices')" class="relative p-2 rounded-full bg-white/15 hover:bg-white/25 transition">
+                        <i data-lucide="bell" class="w-5 h-5 text-white"></i>
+                        <span id="notif-count" class="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">3</span>
+                    </button>
+                    <!-- Profile Avatar -->
+                    <button onclick="openRoleSwitcher()" class="w-10 h-10 rounded-full bg-amber-200 border-2 border-white shadow-md overflow-hidden flex items-center justify-center text-indigo-900 font-bold text-sm" title="Klik untuk ganti akun Guru / Siswa">
+                        <span id="header-avatar-initials">S6</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Greeting Section -->
+            <div class="mt-5 relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-1.5">
+                        Halo, <span id="greeting-name">Siswa Kelas 6</span> <span>👋</span>
+                    </h2>
+                    <p class="text-indigo-100 text-xs sm:text-sm mt-0.5">Selamat belajar! Semoga harimu menyenangkan di SDN 1 Malebo.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="cloud-status" class="inline-flex items-center gap-1.5 text-[11px] bg-emerald-500/20 border border-emerald-300/30 text-emerald-100 px-2.5 py-1 rounded-full">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Cloud Sync Aktif
+                    </span>
+                    <button onclick="openRoleSwitcher()" class="text-xs font-semibold bg-white text-indigo-700 hover:bg-indigo-50 px-3 py-1.5 rounded-full shadow-sm transition">
+                        Ganti Akun / Login Guru
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- FLOATING SEARCH BAR -->
+        <div class="px-5 sm:px-8 -mt-6 relative z-20">
+            <div class="bg-white rounded-2xl shadow-md border border-slate-100 flex items-center px-4 py-3 gap-3 focus-within:ring-2 focus-within:ring-indigo-500 transition">
+                <i data-lucide="search" class="w-5 h-5 text-indigo-500 shrink-0"></i>
+                <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Cari menu, nama siswa, tugas, atau pengumuman..." class="w-full text-sm bg-transparent outline-none text-slate-700 placeholder-slate-400">
+                <button id="clear-search-btn" onclick="clearSearch()" class="hidden text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN DYNAMIC VIEW CONTAINER -->
+        <main id="app-content" class="px-5 sm:px-8 pt-6 flex-1">
+            <!-- Rendered by JS -->
+        </main>
+
+        <!-- BOTTOM NAVIGATION BAR (Mirrors Reference Image: Home, Calendar, Messages, More) -->
+        <nav class="fixed bottom-0 left-0 right-0 max-w-4xl mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-2 flex justify-around items-center z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+            <button onclick="navigateTo('home')" data-nav="home" class="nav-item flex flex-col items-center gap-1 p-2 rounded-xl text-indigo-600 transition">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[11px] font-semibold">Home</span>
+            </button>
+            <button onclick="navigateTo('events')" data-nav="events" class="nav-item flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-indigo-600 transition">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+                <span class="text-[11px] font-medium">Calendar</span>
+            </button>
+            <button onclick="navigateTo('chatbox')" data-nav="chatbox" class="nav-item flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-indigo-600 transition">
+                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                <span class="text-[11px] font-medium">Messages</span>
+            </button>
+            <button onclick="openRoleSwitcher()" data-nav="more" class="nav-item flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-indigo-600 transition">
+                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                <span class="text-[11px] font-medium">More</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- FIREBASE & APPLICATION SCRIPT -->
+    <script type="module">
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ==========================================
+        // 1. DATA SISWA KELAS 6 (14 SISWA DARI LAMPIRAN)
+        // ==========================================
+        const INITIAL_STUDENTS = [
+            { no: 1, nis: "3461", nisn: "0149649198", nama: "AGUSTINA NOVITASARI", jk: "P", ttl: "-", alamat: "-" },
+            { no: 2, nis: "3463", nisn: "0149359771", nama: "AJI WICAKSONO", jk: "L", ttl: "-", alamat: "-" },
+            { no: 3, nis: "3464", nisn: "0145907884", nama: "ALISHA NASYWA SALSABILA", jk: "P", ttl: "-", alamat: "-" },
+            { no: 4, nis: "3527", nisn: "3152421516", nama: "AZRIL FAEYZA PUTRA", jk: "L", ttl: "-", alamat: "-" },
+            { no: 5, nis: "3466", nisn: "0147038497", nama: "DELA SITI FATONAH", jk: "P", ttl: "-", alamat: "-" },
+            { no: 6, nis: "3467", nisn: "0149053280", nama: "DZAKIRA THALITA AZZAHRAH", jk: "P", ttl: "-", alamat: "-" },
+            { no: 7, nis: "3468", nisn: "0139818739", nama: "FANIA RISYA AZZAHRA", jk: "P", ttl: "-", alamat: "-" },
+            { no: 8, nis: "3470", nisn: "3144867907", nama: "MANGGALA PANDU ARKANA JENAR", jk: "L", ttl: "-", alamat: "-" },
+            { no: 9, nis: "3471", nisn: "0147554399", nama: "MUFLIHATUN DWI SAFITRI", jk: "P", ttl: "-", alamat: "-" },
+            { no: 10, nis: "3472", nisn: "0131571410", nama: "MUHAMMAD AZAMY SYAUQILLAH", jk: "L", ttl: "-", alamat: "-" },
+            { no: 11, nis: "3473", nisn: "3142528390", nama: "MUHAMMAD SHINGGIH HENDRO JATI", jk: "L", ttl: "-", alamat: "-" },
+            { no: 12, nis: "3474", nisn: "0143251385", nama: "MUTIA KARTIKA SARI", jk: "P", ttl: "-", alamat: "-" },
+            { no: 13, nis: "3475", nisn: "0155241078", nama: "NAEYLA HAFIZAH PUTRI", jk: "P", ttl: "-", alamat: "-" },
+            { no: 14, nis: "3478", nisn: "0149178604", nama: "SEPTIA YUSIANA ARDANI", jk: "P", ttl: "-", alamat: "-" }
+        ];
+
+        // ==========================================
+        // 2. DEFAULT PORTAL DATA (CLOUD SYNCED)
+        // ==========================================
+        const DEFAULT_PORTAL_DATA = {
+            students: INITIAL_STUDENTS,
+            staffs: [
+                { id: "st-1", name: "Erni Nubdzatul Mufidah, S.Pd.", role: "Wali Kelas 6", nip: "19850412 201001 2 015", phone: "0812-3456-7890", subject: "Tematik / Matematika / IPAS" },
+                { id: "st-2", name: "Drs. Bambang Sutrisno", role: "Kepala Sekolah", nip: "19680920 199403 1 004", phone: "0813-2233-4455", subject: "Manajemen Sekolah" },
+                { id: "st-3", name: "Ahmad Fauzi, S.Pd.I", role: "Guru PAI & Budi Pekerti", nip: "19900215 201903 1 008", phone: "0857-1122-3344", subject: "Pendidikan Agama Islam" },
+                { id: "st-4", name: "Rina Wulandari, S.Pd", role: "Guru PJOK", nip: "19920810 202012 2 011", phone: "0821-9988-7766", subject: "Pendidikan Jasmani & Olahraga" }
+            ],
+            events: [
+                { id: "ev-1", month: "NOV", day: "25", weekday: "Rab", title: "Peringatan Hari Guru Nasional", time: "07:30 - 11:00 WIB", location: "Lapangan SD Negeri 1 Malebo", status: "Upcoming" },
+                { id: "ev-2", month: "DES", day: "07", weekday: "Sen", title: "Asesmen Sumatif Akhir Semester (ASAS)", time: "07:30 - 10:30 WIB", location: "Ruang Kelas 6", status: "Upcoming" },
+                { id: "ev-3", month: "DES", day: "19", weekday: "Sab", title: "Penerimaan Rapor Semester 1", time: "08:00 - 11:00 WIB", location: "Ruang Kelas 6", status: "Upcoming" }
+            ],
+            attendance: {}, // { "2026-11-12": { "3461": "Hadir", ... } }
+            grades: {
+                // Default sample grades for students
+                "3461": { mtk: 88, bindo: 92, ipas: 90, pkn: 89, pai: 94 },
+                "3463": { mtk: 85, bindo: 84, ipas: 87, pkn: 86, pai: 90 },
+                "3464": { mtk: 91, bindo: 90, ipas: 89, pkn: 92, pai: 93 }
+            },
+            gallery: [
+                { id: "gal-1", title: "Praktik Percobaan Rangkaian Listrik Kelas 6", date: "10 Nov 2026", desc: "Siswa kelas 6 merakit rangkaian listrik seri dan paralel pada pelajaran IPAS.", color: "from-blue-500 to-indigo-600" },
+                { id: "gal-2", title: "Upacara Bendera Hari Pahlawan", date: "10 Nov 2026", desc: "Petugas upacara dari kelas 6 SDN 1 Malebo bertugas dengan penuh disiplin.", color: "from-rose-500 to-amber-500" },
+                { id: "gal-3", title: "Senam Sehat Bersama Jumat Pagi", date: "06 Nov 2026", desc: "Kegiatan kebugaran jasmani rutin seluruh warga SD Negeri 1 Malebo.", color: "from-emerald-500 to-teal-600" }
+            ],
+            fees: {
+                // Kas Kelas & Tabungan Siswa
+                "3461": { kasBulanIni: "Lunas", saldoTabungan: 125000, keterangan: "Lunas s/d November 2026" },
+                "3463": { kasBulanIni: "Lunas", saldoTabungan: 90000, keterangan: "Lunas s/d November 2026" }
+            },
+            notices: [
+                { id: "not-1", title: "Jadwal Latihan Try Out TKA Kelas 6", date: "12 Nov 2026", tag: "BARU", content: "Diberitahukan kepada seluruh siswa kelas 6 agar membawa pensil 2B dan papan ujian mulai hari Senin depan untuk persiapan Try Out." },
+                { id: "not-2", title: "Pengumpulan Foto Ijazah", date: "08 Nov 2026", tag: "PENTING", content: "Mohon orang tua/wali murid segera mengumpulkan pas foto ukuran 3x4 latar merah berseragam SD paling lambat akhir bulan." }
+            ],
+            assignments: [
+                { id: "asg-1", subject: "Matematika", title: "Latihan Soal Bangun Ruang (Kubus & Balok)", dueDate: "15 Nov 2026", desc: "Kerjakan buku paket halaman 112 nomor 1 sampai 10 di buku tulis tugas.", status: "Aktif", attachmentType: "link", attachmentName: "Modul Bangun Ruang Kelas 6", attachmentUrl: "https://buku.kemdikbud.go.id" },
+                { id: "asg-2", subject: "IPAS", title: "Laporan Pengamatan Tata Surya", dueDate: "18 Nov 2026", desc: "Buatlah ringkasan ciri-ciri planet dalam dan planet luar beserta gambarnya.", status: "Aktif", attachmentType: "none", attachmentName: "", attachmentUrl: "" },
+                { id: "asg-3", subject: "Bahasa Indonesia", title: "Menulis Teks Pidato Persuasif", dueDate: "20 Nov 2026", desc: "Tema: Menjaga Kebersihan Lingkungan Sekolah SDN 1 Malebo.", status: "Aktif", attachmentType: "none", attachmentName: "", attachmentUrl: "" }
+            ],
+            exams: [
+                { id: "ex-1", subject: "Pendidikan Agama & PPKn", date: "Senin, 07 Des 2026", time: "07:30 - 09:30", room: "Ruang Kelas 6", attachmentType: "link", attachmentName: "Kisi-Kisi ASAS PAI & PPKn", attachmentUrl: "https://buku.kemdikbud.go.id" },
+                { id: "ex-2", subject: "Bahasa Indonesia & IPAS", date: "Selasa, 08 Des 2026", time: "07:30 - 09:30", room: "Ruang Kelas 6", attachmentType: "none", attachmentName: "", attachmentUrl: "" },
+                { id: "ex-3", subject: "Matematika & Bahasa Inggris", date: "Rabu, 09 Des 2026", time: "07:30 - 09:30", room: "Ruang Kelas 6", attachmentType: "none", attachmentName: "", attachmentUrl: "" },
+                { id: "ex-4", subject: "Seni Budaya & PJOK", date: "Kamis, 10 Des 2026", time: "07:30 - 09:30", room: "Ruang Kelas 6", attachmentType: "none", attachmentName: "", attachmentUrl: "" }
+            ],
+            library: [
+                { id: "lib-1", title: "Buku Siswa Matematika Kelas VI (Kurikulum Merdeka)", author: "Kemendikbudristek", category: "Buku Paket", attachmentType: "link", attachmentName: "Buku_Matematika_Kelas_6.pdf", link: "https://buku.kemdikbud.go.id" },
+                { id: "lib-2", title: "Buku Siswa IPAS Kelas VI SD", author: "Kemendikbudristek", category: "Buku Paket", attachmentType: "link", attachmentName: "Buku_IPAS_Kelas_6.pdf", link: "https://buku.kemdikbud.go.id" },
+                { id: "lib-3", title: "Kumpulan Cerita Rakyat Nusantara", author: "Perpustakaan SDN 1 Malebo", category: "Bacaan Literasi", attachmentType: "link", attachmentName: "Cerita_Rakyat.pdf", link: "https://buku.kemdikbud.go.id" }
+            ],
+            messages: [
+                { id: "msg-1", sender: "Ibu Erni Nubdzatul Mufidah (Wali Kelas)", role: "guru", text: "Selamat datang di Portal Pembelajaran Kelas 6 SDN 1 Malebo! Silakan cek tugas dan jadwal ujian terbaru ya anak-anak.", time: "07:30" },
+                { id: "msg-2", sender: "AGUSTINA NOVITASARI", role: "siswa", text: "Baik Bu Guru, terima kasih informasinya.", time: "07:45" }
+            ]
+        };
+
+        // ==========================================
+        // 3. APP STATE & MENU CONFIGURATION
+        // ==========================================
+        let appState = {
+            role: 'siswa', // 'siswa' | 'guru'
+            currentUser: { name: 'Siswa Kelas 6', nis: '3461' }, // Default student or teacher
+            activeMenu: 'home',
+            searchQuery: '',
+            selectedDate: new Date().toISOString().split('T')[0],
+            data: JSON.parse(JSON.stringify(DEFAULT_PORTAL_DATA)),
+            isCloudReady: false
+        };
+
+        // Exact 12 Quick Access Menus matching the attached image
+        const QUICK_MENUS = [
+            { id: 'profile', title: 'Profile', subtitle: 'Data siswa & profil', icon: 'user', bg: 'bg-[#F3F0FF]', iconBg: 'bg-[#5B46F6]', access: 'all' },
+            { id: 'events', title: 'Events', subtitle: 'Agenda sekolah', icon: 'calendar', bg: 'bg-[#FFF4EB]', iconBg: 'bg-[#F97316]', access: 'all' },
+            { id: 'staffs', title: 'Staffs', subtitle: 'Direktori guru', icon: 'users', bg: 'bg-[#EFF6FF]', iconBg: 'bg-[#3B82F6]', access: 'all' },
+            { id: 'attendance', title: 'Attendance', subtitle: 'Cek & isi presensi', icon: 'calendar-check', bg: 'bg-[#ECFDF5]', iconBg: 'bg-[#10B981]', access: 'all' },
+            { id: 'chatbox', title: 'Chatbox', subtitle: 'Pesan & diskusi', icon: 'message-square', bg: 'bg-[#FDF2F8]', iconBg: 'bg-[#EC4899]', access: 'all' },
+            { id: 'gradesheet', title: 'GradeSheet', subtitle: 'Lihat & kelola nilai', icon: 'bar-chart-2', bg: 'bg-[#FEFCE8]', iconBg: 'bg-[#EAB308]', access: 'all' },
+            { id: 'gallery', title: 'Gallery', subtitle: 'Foto & kegiatan', icon: 'image', bg: 'bg-[#EFF6FF]', iconBg: 'bg-[#2563EB]', access: 'all' },
+            { id: 'fees', title: 'Fees Details', subtitle: 'Kas kelas & tabungan', icon: 'wallet', bg: 'bg-[#F0FDF4]', iconBg: 'bg-[#0D9488]', access: 'all' },
+            { id: 'notices', title: 'Notices', subtitle: 'Pengumuman terbaru', icon: 'file-text', bg: 'bg-[#F5F3FF]', iconBg: 'bg-[#6D28D9]', badge: 'NEW', access: 'all' },
+            { id: 'assignments', title: 'Assignments', subtitle: 'Tugas & PR kelas', icon: 'book-open', bg: 'bg-[#FFF7ED]', iconBg: 'bg-[#EA580C]', access: 'all' },
+            { id: 'exams', title: 'Exams', subtitle: 'Jadwal & hasil ujian', icon: 'clipboard-list', bg: 'bg-[#F0FDF4]', iconBg: 'bg-[#16A34A]', access: 'all' },
+            { id: 'library', title: 'Library', subtitle: 'Buku & sumber belajar', icon: 'library', bg: 'bg-[#F8FAFC]', iconBg: 'bg-[#3B82F6]', access: 'all' }
+        ];
+
+        // Teacher-only Admin Control Panel Menu
+        const TEACHER_ONLY_MENUS = [
+            { id: 'teacher-students', title: 'Kelola Data Siswa', subtitle: 'Edit & tambah siswa (Khusus Guru)', icon: 'user-cog', bg: 'bg-indigo-50', iconBg: 'bg-indigo-700', teacherOnly: true },
+            { id: 'teacher-cms', title: 'Editor Konten Portal', subtitle: 'Kelola seluruh menu (Khusus Guru)', icon: 'edit-3', bg: 'bg-amber-50', iconBg: 'bg-amber-600', teacherOnly: true }
+        ];
+
+        // ==========================================
+        // 4. FIREBASE CLOUD REAL-TIME INTEGRATION
+        // ==========================================
+        let db = null;
+        let auth = null;
+        let currentFirebaseUser = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'sdn1-malebo-kelas6-2026';
+        let portalDocRef = null;
+
+        // ISI konfigurasi proyek Firebase Anda di sini agar cloud sync aktif di hosting mana pun
+        // (Firebase Console > Project settings > Your apps > Web app > firebaseConfig).
+        // Wajib: aktifkan Authentication > Sign-in method > Anonymous, dan buat database Firestore.
+        const FIREBASE_CONFIG = {
+            apiKey: "ISI_API_KEY",
+            authDomain: "ISI_PROJECT_ID.firebaseapp.com",
+            projectId: "ISI_PROJECT_ID",
+            storageBucket: "ISI_PROJECT_ID.firebasestorage.app",
+            messagingSenderId: "ISI",
+            appId: "ISI"
+        };
+        let cloudRetry = 0, cloudTimer = null, pendingSave = false, unsubPortal = null;
+
+        function getFirebaseConfig() {
+            if (typeof __firebase_config !== 'undefined') {
+                try { return JSON.parse(__firebase_config); } catch (e) {}
+            }
+            const c = FIREBASE_CONFIG;
+            return (c.apiKey && !String(c.apiKey).startsWith('ISI') && c.projectId && !String(c.projectId).startsWith('ISI')) ? c : null;
+        }
+
+        function scheduleCloudRetry() {
+            clearTimeout(cloudTimer);
+            const delay = Math.min(30000, 2000 * Math.pow(2, Math.min(cloudRetry++, 4)));
+            cloudTimer = setTimeout(initCloudSync, delay);
+        }
+
+        async function flushPendingSave() {
+            if (!pendingSave || !portalDocRef) return;
+            try {
+                const raw = localStorage.getItem('portal_pending');
+                const data = raw ? JSON.parse(raw) : appState.data;
+                await setDoc(portalDocRef, { payload: JSON.stringify(data), updatedAt: new Date().toISOString(), updatedBy: appState.currentUser.name });
+                pendingSave = false;
+                localStorage.removeItem('portal_pending');
+                showToast("Perubahan tertunda berhasil disinkronkan ke Cloud!", "success");
+            } catch (e) { scheduleCloudRetry(); }
+        }
+
+        async function initCloudSync() {
+            clearTimeout(cloudTimer);
+            try {
+                const firebaseConfig = getFirebaseConfig();
+                if (!firebaseConfig) {
+                    console.warn("Firebase config belum diisi, berjalan dalam mode lokal.");
+                    updateCloudBadge(false);
+                    return;
+                }
+                const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Rule 3: Auth Before Queries
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                currentFirebaseUser = auth.currentUser;
+                if (!currentFirebaseUser) return;
+
+                // Rule 1: Strict Path under /artifacts/{appId}/public/data/{collectionName}
+                portalDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'portal_kelas6_malebo', 'main_state_v3');
+
+                // Check if document exists, if not initialize with DEFAULT_PORTAL_DATA
+                const snap = await getDoc(portalDocRef);
+                if (!snap.exists()) {
+                    await setDoc(portalDocRef, {
+                        payload: JSON.stringify(DEFAULT_PORTAL_DATA),
+                        updatedAt: new Date().toISOString()
+                    });
+                }
+
+                // Real-time listener across all devices
+                if (unsubPortal) { try { unsubPortal(); } catch (e) {} }
+                if (localStorage.getItem('portal_pending')) pendingSave = true;
+                unsubPortal = onSnapshot(portalDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const raw = docSnap.data();
+                        if (raw && raw.payload) {
+                            try {
+                                const parsed = JSON.parse(raw.payload);
+                                // Merge safely ensuring students array is intact
+                                appState.data = { ...DEFAULT_PORTAL_DATA, ...parsed };
+                                if (!appState.data.students || appState.data.students.length === 0) {
+                                    appState.data.students = INITIAL_STUDENTS;
+                                }
+                                appState.isCloudReady = true;
+                                cloudRetry = 0;
+                                updateCloudBadge(true);
+                                if (pendingSave) { flushPendingSave(); } else { renderCurrentView(); }
+                            } catch (e) {
+                                console.error("Gagal parsing data cloud:", e);
+                            }
+                        }
+                    }
+                }, (error) => {
+                    console.error("Firestore onSnapshot error:", error);
+                    appState.isCloudReady = false;
+                    updateCloudBadge(false);
+                    scheduleCloudRetry();
+                });
+
+            } catch (err) {
+                console.error("Cloud init error:", err);
+                appState.isCloudReady = false;
+                updateCloudBadge(false);
+                scheduleCloudRetry();
+            }
+        }
+
+        async function saveToCloud(successMsg = "Perubahan disimpan ke Cloud & tersinkron ke perangkat siswa!") {
+            renderCurrentView(); // Instant optimistic UI update
+            if (!db || !currentFirebaseUser || !portalDocRef) {
+                pendingSave = true;
+                try { localStorage.setItem('portal_pending', JSON.stringify(appState.data)); } catch (e) {}
+                showToast(successMsg + " (Tersimpan lokal, akan otomatis disinkronkan saat Cloud tersambung)", "info");
+                initCloudSync();
+                return;
+            }
+            try {
+                await setDoc(portalDocRef, {
+                    payload: JSON.stringify(appState.data),
+                    updatedAt: new Date().toISOString(),
+                    updatedBy: appState.currentUser.name
+                });
+                showToast(successMsg, "success");
+            } catch (err) {
+                console.error("Gagal menyimpan ke cloud:", err);
+                pendingSave = true;
+                try { localStorage.setItem('portal_pending', JSON.stringify(appState.data)); } catch (e) {}
+                showToast("Gagal sinkronisasi. Perubahan disimpan lokal dan dicoba lagi otomatis.", "error");
+                scheduleCloudRetry();
+            }
+        }
+
+        function updateCloudBadge(isOnline) {
+            const el = document.getElementById('cloud-status');
+            if (!el) return;
+            if (isOnline) {
+                el.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Cloud Real-Time Aktif`;
+                el.className = "inline-flex items-center gap-1.5 text-[11px] bg-emerald-500/20 border border-emerald-300/30 text-emerald-100 px-2.5 py-1 rounded-full";
+            } else {
+                el.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span> Mode Offline / Lokal`;
+                el.className = "inline-flex items-center gap-1.5 text-[11px] bg-amber-500/20 border border-amber-300/30 text-amber-100 px-2.5 py-1 rounded-full";
+            }
+        }
+
+        // ==========================================
+        // 5. ROLE & AUTHENTICATION (GURU VS SISWA)
+        // ==========================================
+        window.openRoleSwitcher = function() {
+            const studentOptions = appState.data.students.map(s =>
+                `<option value="${s.nis}" ${appState.role === 'siswa' && appState.currentUser.nis === s.nis ? 'selected' : ''}>${s.no}. ${s.nama} (NIS: ${s.nis})</option>`
+            ).join('');
+
+            const html = `
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-slate-800">Pilih Akses Portal Kelas 6</h3>
+                        <button onclick="closeModal()" class="p-1.5 rounded-full hover:bg-slate-100 text-slate-500">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-5">SD Negeri 1 Malebo • Tahun Ajaran 2026/2027</p>
+
+                    <!-- Tab Siswa -->
+                    <div class="bg-blue-50/70 border border-blue-100 rounded-2xl p-4 mb-4">
+                        <div class="flex items-center gap-2.5 mb-2">
+                            <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+                                <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800">Masuk sebagai Siswa</h4>
+                                <p class="text-[11px] text-slate-500">Akses materi, tugas, nilai, presensi & chat kelas</p>
+                            </div>
+                        </div>
+                        <select id="select-student-login" class="w-full mt-2 text-xs bg-white border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                            ${studentOptions}
+                        </select>
+                        <button onclick="loginAsStudent()" class="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 rounded-xl shadow transition">
+                            Masuk Portal Siswa
+                        </button>
+                    </div>
+
+                    <!-- Tab Guru -->
+                    <div class="bg-indigo-50/80 border border-indigo-200 rounded-2xl p-4">
+                        <div class="flex items-center gap-2.5 mb-2">
+                            <div class="w-8 h-8 rounded-xl bg-indigo-700 text-white flex items-center justify-center">
+                                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800">Masuk sebagai Guru (Admin)</h4>
+                                <p class="text-[11px] text-slate-500">Akses penuh & edit semua menu (Sinkron Cloud)</p>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label class="text-[11px] font-semibold text-slate-600 block mb-1">Masukkan Password Guru</label>
+                            <input type="password" id="teacher-pin-input" placeholder="••••••••••" value="" class="w-full text-sm bg-white border border-slate-200 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 tracking-widest">
+                        </div>
+                        <button onclick="loginAsTeacher()" class="w-full mt-3 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-semibold py-2.5 rounded-xl shadow transition">
+                            Masuk Mode Guru & Edit Konten
+                        </button>
+                    </div>
+                </div>
+            `;
+            openModal(html);
+        };
+
+        window.loginAsStudent = function() {
+            const select = document.getElementById('select-student-login');
+            const nis = select.value;
+            const student = appState.data.students.find(s => s.nis === nis) || appState.data.students[0];
+            appState.role = 'siswa';
+            appState.currentUser = { name: student.nama, nis: student.nis };
+            // If currently on teacher-only menu, redirect to home
+            if (appState.activeMenu.startsWith('teacher-')) {
+                appState.activeMenu = 'home';
+            }
+            updateHeaderUI();
+            closeModal();
+            renderCurrentView();
+            showToast(`Berhasil masuk sebagai ${student.nama}`, "success");
+        };
+
+        window.loginAsTeacher = function() {
+            const pin = document.getElementById('teacher-pin-input').value.trim();
+            if (pin !== 'ErnyMalebo1') {
+                showToast("Password guru salah!", "error");
+                return;
+            }
+            appState.role = 'guru';
+            appState.currentUser = { name: 'Ibu Erni Nubdzatul Mufidah, S.Pd. (Guru Kelas 6)', nis: 'GURU' };
+            updateHeaderUI();
+            closeModal();
+            renderCurrentView();
+            showToast("Mode Guru Aktif! Anda dapat mengedit seluruh menu portal.", "success");
+        };
+
+        function updateHeaderUI() {
+            const badge = document.getElementById('role-badge');
+            const greeting = document.getElementById('greeting-name');
+            const initials = document.getElementById('header-avatar-initials');
+
+            if (appState.role === 'guru') {
+                badge.textContent = 'Mode Guru (Editor)';
+                badge.className = 'text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-400 text-slate-950 shadow-sm';
+                greeting.textContent = 'Ibu Erni Nubdzatul Mufidah, S.Pd.';
+                initials.textContent = 'GR';
+            } else {
+                badge.textContent = 'Mode Siswa';
+                badge.className = 'text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-900 shadow-sm';
+                greeting.textContent = appState.currentUser.name;
+                initials.textContent = appState.currentUser.name.substring(0, 2).toUpperCase();
+            }
+        }
+
+        // ==========================================
+        // 6. NAVIGATION & SEARCH HANDLERS
+        // ==========================================
+        window.navigateTo = function(menuId) {
+            // Security check for Teacher-Only menus
+            if (menuId.startsWith('teacher-') && appState.role !== 'guru') {
+                showToast("Menu ini khusus untuk Guru! Silakan login sebagai Guru.", "error");
+                openRoleSwitcher();
+                return;
+            }
+            appState.activeMenu = menuId;
+            // Update bottom nav active styling
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                const target = btn.getAttribute('data-nav');
+                if (target === menuId || (menuId === 'home' && target === 'home')) {
+                    btn.classList.remove('text-slate-400');
+                    btn.classList.add('text-indigo-600');
+                } else {
+                    btn.classList.remove('text-indigo-600');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderCurrentView();
+        };
+
+        window.handleSearch = function(val) {
+            appState.searchQuery = val.toLowerCase().trim();
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (appState.searchQuery) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            renderCurrentView();
+        };
+
+        window.clearSearch = function() {
+            const input = document.getElementById('global-search');
+            input.value = '';
+            handleSearch('');
+        };
+
+        // ==========================================
+        // 7. VIEW RENDERERS
+        // ==========================================
+        function renderCurrentView() {
+            const container = document.getElementById('app-content');
+            if (!container) return;
+
+            // Update notice counter badge
+            const notifCount = document.getElementById('notif-count');
+            if (notifCount) notifCount.textContent = appState.data.notices.length;
+
+            const menu = appState.activeMenu;
+
+            if (menu === 'home') {
+                container.innerHTML = renderHomeView();
+            } else {
+                container.innerHTML = renderSubPageWrapper(menu);
+            }
+            lucide.createIcons();
+        }
+
+        function renderHomeView() {
+            const q = appState.searchQuery;
+            const filteredMenus = QUICK_MENUS.filter(m =>
+                m.title.toLowerCase().includes(q) || m.subtitle.toLowerCase().includes(q)
+            );
+
+            // Teacher Special Section (Only visible when logged in as Guru)
+            let teacherBannerHtml = '';
+            if (appState.role === 'guru') {
+                teacherBannerHtml = `
+                    <div class="mb-6 bg-gradient-to-r from-indigo-900 to-indigo-700 text-white rounded-3xl p-4 sm:p-5 shadow-md">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-amber-400 text-slate-900 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">Ruang Khusus Guru</span>
+                                <h3 class="text-sm sm:text-base font-bold">Panel Kontrol Wali Kelas 6</h3>
+                            </div>
+                            <span class="text-[11px] text-indigo-200">${appState.data.students.length} Siswa Aktif</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            ${TEACHER_ONLY_MENUS.map(tm => `
+                                <button onclick="navigateTo('${tm.id}')" class="flex items-center justify-between bg-white/10 hover:bg-white/20 border border-white/15 rounded-2xl p-3 text-left transition">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl ${tm.iconBg} flex items-center justify-center text-white shrink-0 shadow">
+                                            <i data-lucide="${tm.icon}" class="w-5 h-5"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-bold text-white">${tm.title}</div>
+                                            <div class="text-[11px] text-indigo-200">${tm.subtitle}</div>
+                                        </div>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-4 h-4 text-indigo-200"></i>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Quick Access 3-column Grid (Matches Reference Image)
+            const gridHtml = filteredMenus.map(m => `
+                <button onclick="navigateTo('${m.id}')" class="card-hover ${m.bg} rounded-3xl p-3.5 sm:p-4 text-left flex flex-col justify-between relative border border-white shadow-sm hover:shadow-md">
+                    ${m.badge ? `<span class="absolute top-3 right-3 bg-[#5B46F6] text-white text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wide">${m.badge}</span>` : ''}
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full ${m.iconBg} text-white flex items-center justify-center shadow-sm mb-3">
+                        <i data-lucide="${m.icon}" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs sm:text-sm font-bold text-slate-800 leading-tight">${m.title}</h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <p class="text-[10px] sm:text-[11px] text-slate-500 line-clamp-1">${m.subtitle}</p>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+                        </div>
+                    </div>
+                </button>
+            `).join('');
+
+            // Upcoming Events Section (Matches Reference Image bottom section)
+            const upcomingEventsHtml = appState.data.events.slice(0, 2).map(ev => `
+                <div onclick="navigateTo('events')" class="cursor-pointer flex items-center justify-between py-3 border-b border-slate-100 last:border-none hover:bg-slate-50/80 px-2 rounded-xl transition">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-12 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center shrink-0">
+                            <span class="text-[10px] font-bold text-indigo-600 uppercase">${ev.month}</span>
+                            <span class="text-base font-extrabold text-slate-800 leading-none my-0.5">${ev.day}</span>
+                            <span class="text-[10px] text-slate-400">${ev.weekday}</span>
+                        </div>
+                        <div>
+                            <h5 class="text-xs sm:text-sm font-bold text-slate-800">${ev.title}</h5>
+                            <div class="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1">
+                                <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i>
+                                <span>${ev.time}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-[11px] text-slate-500 mt-0.5">
+                                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i>
+                                <span>${ev.location}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600 shrink-0">
+                        ${ev.status}
+                    </span>
+                </div>
+            `).join('');
+
+            return `
+                ${teacherBannerHtml}
+
+                <!-- Quick Access Header -->
+                <div class="flex items-center justify-between mb-3.5">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">Quick Access</h3>
+                    <span class="text-xs font-semibold text-indigo-600">Kelas 6 (${appState.data.students.length} Siswa)</span>
+                </div>
+
+                <!-- 12 Menu Cards Grid (3 Columns on mobile & desktop just like reference) -->
+                <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-7">
+                    ${gridHtml}
+                </div>
+
+                <!-- Upcoming Events Card -->
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">Upcoming Events</h3>
+                    <button onclick="navigateTo('events')" class="text-xs font-semibold text-indigo-600 hover:underline">View Calendar</button>
+                </div>
+
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
+                    ${upcomingEventsHtml}
+                    <button onclick="navigateTo('events')" class="w-full mt-2 pt-2.5 border-t border-slate-100 text-center text-xs font-bold text-indigo-600 hover:text-indigo-800 transition">
+                        View All Events
+                    </button>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 8. SUB-PAGES FOR ALL 12 MENUS + TEACHER EDITORS
+        // ==========================================
+        function renderSubPageWrapper(menuId) {
+            const allMenus = [...QUICK_MENUS, ...TEACHER_ONLY_MENUS];
+            const meta = allMenus.find(m => m.id === menuId) || { title: 'Detail Menu', subtitle: '' };
+
+            let contentHtml = '';
+            switch (menuId) {
+                case 'profile':
+                case 'teacher-students':
+                    contentHtml = renderProfileAndStudentsView(menuId === 'teacher-students');
+                    break;
+                case 'events':
+                    contentHtml = renderEventsView();
+                    break;
+                case 'staffs':
+                    contentHtml = renderStaffsView();
+                    break;
+                case 'attendance':
+                    contentHtml = renderAttendanceView();
+                    break;
+                case 'chatbox':
+                    contentHtml = renderChatboxView();
+                    break;
+                case 'gradesheet':
+                    contentHtml = renderGradesView();
+                    break;
+                case 'gallery':
+                    contentHtml = renderGalleryView();
+                    break;
+                case 'fees':
+                    contentHtml = renderFeesView();
+                    break;
+                case 'notices':
+                    contentHtml = renderNoticesView();
+                    break;
+                case 'assignments':
+                    contentHtml = renderAssignmentsView();
+                    break;
+                case 'exams':
+                    contentHtml = renderExamsView();
+                    break;
+                case 'library':
+                    contentHtml = renderLibraryView();
+                    break;
+                case 'teacher-cms':
+                    contentHtml = renderTeacherCmsOverview();
+                    break;
+                default:
+                    contentHtml = `<p class="text-sm text-slate-500">Halaman tidak ditemukan.</p>`;
+            }
+
+            return `
+                <div class="mb-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <button onclick="navigateTo('home')" class="p-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 shadow-sm transition">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        </button>
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-800">${meta.title}</h2>
+                            <p class="text-xs text-slate-500">${meta.subtitle}</p>
+                        </div>
+                    </div>
+                    ${appState.role === 'guru' ? `<span class="text-[11px] font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">Mode Edit Guru</span>` : ''}
+                </div>
+                ${contentHtml}
+            `;
+        }
+
+        // --- 1. PROFILE & DATA SISWA (30 SISWA DARI EXCEL) ---
+        function renderProfileAndStudentsView(isTeacherEditor) {
+            const isGuru = appState.role === 'guru';
+            const q = appState.searchQuery;
+            const filteredStudents = appState.data.students.filter(s =>
+                s.nama.toLowerCase().includes(q) || s.nis.includes(q) || s.nisn.includes(q)
+            );
+
+            // Active student card if logged in as student
+            let myProfileCard = '';
+            if (!isGuru) {
+                const me = appState.data.students.find(s => s.nis === appState.currentUser.nis) || appState.data.students[0];
+                myProfileCard = `
+                    <div class="bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-3xl p-5 mb-5 shadow-md">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-xl font-extrabold">
+                                ${me.nama.substring(0, 2)}
+                            </div>
+                            <div>
+                                <span class="text-[10px] uppercase tracking-wider bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded-full">Kartu Pelajar Digital</span>
+                                <h3 class="text-base sm:text-lg font-bold mt-1">${me.nama}</h3>
+                                <p class="text-xs text-indigo-100">NIS: ${me.nis} • NISN: ${me.nisn}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-white/15 text-xs">
+                            <div><span class="text-indigo-200 block text-[10px]">Tempat, Tanggal Lahir</span>${me.ttl}</div>
+                            <div><span class="text-indigo-200 block text-[10px]">Alamat</span>${me.alamat}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                ${myProfileCard}
+                <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-100">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-slate-800">Daftar Siswa Kelas 6 (${filteredStudents.length} Siswa)</h3>
+                            <p class="text-[11px] text-slate-500">SD Negeri 1 Malebo • Tahun Ajaran 2026/2027</p>
+                        </div>
+                        ${isGuru ? `
+                            <button onclick="openStudentFormModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Siswa
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase">
+                                    <th class="py-2.5 px-2">No</th>
+                                    <th class="py-2.5 px-2">NIS / NISN</th>
+                                    <th class="py-2.5 px-2">Nama Lengkap</th>
+                                    <th class="py-2.5 px-2">L/P</th>
+                                    <th class="py-2.5 px-2 hidden sm:table-cell">TTL</th>
+                                    <th class="py-2.5 px-2 hidden md:table-cell">Alamat</th>
+                                    ${isGuru ? `<th class="py-2.5 px-2 text-right">Aksi</th>` : ''}
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs">
+                                ${filteredStudents.map(s => `
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="py-2.5 px-2 font-semibold text-slate-600">${s.no}</td>
+                                        <td class="py-2.5 px-2">
+                                            <div class="font-bold text-slate-800">${s.nis}</div>
+                                            <div class="text-[10px] text-slate-400">${s.nisn}</div>
+                                        </td>
+                                        <td class="py-2.5 px-2 font-bold text-slate-800">${s.nama}</td>
+                                        <td class="py-2.5 px-2">
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${s.jk === 'L' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}">${s.jk}</span>
+                                        </td>
+                                        <td class="py-2.5 px-2 text-slate-600 hidden sm:table-cell">${s.ttl}</td>
+                                        <td class="py-2.5 px-2 text-slate-600 hidden md:table-cell">${s.alamat}</td>
+                                        ${isGuru ? `
+                                            <td class="py-2.5 px-2 text-right whitespace-nowrap">
+                                                <button onclick="openStudentFormModal('${s.nis}')" class="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg" title="Edit">
+                                                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                                </button>
+                                                <button onclick="deleteStudent('${s.nis}')" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg" title="Hapus">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                                </button>
+                                            </td>
+                                        ` : ''}
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 2. EVENTS (AGENDA SEKOLAH) ---
+        function renderEventsView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800">Kalender & Agenda Kelas 6</h3>
+                        ${isGuru ? `
+                            <button onclick="openEventModal()" class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Agenda
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="space-y-3">
+                        ${appState.data.events.map(ev => `
+                            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-12 h-14 rounded-2xl bg-orange-100 text-orange-700 flex flex-col items-center justify-center shrink-0">
+                                        <span class="text-[10px] font-bold uppercase">${ev.month}</span>
+                                        <span class="text-base font-extrabold leading-none my-0.5">${ev.day}</span>
+                                        <span class="text-[10px]">${ev.weekday}</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">${ev.title}</h4>
+                                        <p class="text-xs text-slate-500 mt-0.5">${ev.time} • ${ev.location}</p>
+                                    </div>
+                                </div>
+                                ${isGuru ? `
+                                    <div class="flex items-center gap-1">
+                                        <button onclick="openEventModal('${ev.id}')" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                        <button onclick="deleteItem('events', '${ev.id}')" class="p-2 text-rose-600 hover:bg-rose-50 rounded-xl"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    </div>
+                                ` : `<span class="text-[10px] font-bold bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full">${ev.status}</span>`}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 3. STAFFS (DIREKTORI GURU) ---
+        function renderStaffsView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800">Guru & Tenaga Kependidikan</h3>
+                        ${isGuru ? `
+                            <button onclick="openStaffModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Guru
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        ${appState.data.staffs.map(st => `
+                            <div class="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white font-bold flex items-center justify-center shrink-0">
+                                        ${st.name.substring(0, 2).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">${st.name}</h4>
+                                        <span class="text-[11px] font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">${st.role}</span>
+                                        <p class="text-[11px] text-slate-500 mt-1">Mapel: ${st.subject}</p>
+                                        <p class="text-[11px] text-slate-500">HP/WA: ${st.phone}</p>
+                                    </div>
+                                </div>
+                                ${isGuru ? `
+                                    <div class="flex flex-col gap-1">
+                                        <button onclick="openStaffModal('${st.id}')" class="p-1.5 text-indigo-600 hover:bg-white rounded-lg"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                                        <button onclick="deleteItem('staffs', '${st.id}')" class="p-1.5 text-rose-600 hover:bg-white rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 4. ATTENDANCE (PRESENSI HARIAN) ---
+        function renderAttendanceView() {
+            const isGuru = appState.role === 'guru';
+            const dateKey = appState.selectedDate;
+            const dayRecord = appState.data.attendance[dateKey] || {};
+
+            let hadirCount = 0, izinCount = 0, sakitCount = 0, alphaCount = 0;
+            appState.data.students.forEach(s => {
+                const st = dayRecord[s.nis] || 'Hadir';
+                if (st === 'Hadir') hadirCount++;
+                else if (st === 'Izin') izinCount++;
+                else if (st === 'Sakit') sakitCount++;
+                else alphaCount++;
+            });
+
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800">Presensi Kehadiran Kelas 6</h3>
+                            <p class="text-xs text-slate-500">${isGuru ? 'Klik status untuk mengubah presensi & simpan ke Cloud' : 'Rekap kehadiran siswa hari ini'}</p>
+                        </div>
+                        <input type="date" value="${dateKey}" onchange="changeAttendanceDate(this.value)" class="text-xs font-semibold bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 outline-none">
+                    </div>
+
+                    <!-- Summary Badges -->
+                    <div class="grid grid-cols-4 gap-2 mb-4 text-center">
+                        <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-2.5">
+                            <div class="text-base font-extrabold text-emerald-700">${hadirCount}</div>
+                            <div class="text-[10px] font-semibold text-emerald-600">Hadir</div>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-100 rounded-2xl p-2.5">
+                            <div class="text-base font-extrabold text-amber-700">${izinCount}</div>
+                            <div class="text-[10px] font-semibold text-amber-600">Izin</div>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-100 rounded-2xl p-2.5">
+                            <div class="text-base font-extrabold text-blue-700">${sakitCount}</div>
+                            <div class="text-[10px] font-semibold text-blue-600">Sakit</div>
+                        </div>
+                        <div class="bg-rose-50 border border-rose-100 rounded-2xl p-2.5">
+                            <div class="text-base font-extrabold text-rose-700">${alphaCount}</div>
+                            <div class="text-[10px] font-semibold text-rose-600">Alpha</div>
+                        </div>
+                    </div>
+
+                    <div class="divide-y divide-slate-100">
+                        ${appState.data.students.map(s => {
+                            const status = dayRecord[s.nis] || 'Hadir';
+                            const badgeColors = {
+                                'Hadir': 'bg-emerald-100 text-emerald-800',
+                                'Izin': 'bg-amber-100 text-amber-800',
+                                'Sakit': 'bg-blue-100 text-blue-800',
+                                'Alpha': 'bg-rose-100 text-rose-800'
+                            };
+                            return `
+                                <div class="py-2.5 flex items-center justify-between gap-2">
+                                    <div>
+                                        <span class="text-xs font-bold text-slate-800">${s.no}. ${s.nama}</span>
+                                        <span class="text-[10px] text-slate-400 block">NIS: ${s.nis}</span>
+                                    </div>
+                                    ${isGuru ? `
+                                        <div class="flex gap-1">
+                                            ${['Hadir', 'Izin', 'Sakit', 'Alpha'].map(opt => `
+                                                <button onclick="setStudentAttendance('${s.nis}', '${opt}')" class="px-2 py-1 rounded-lg text-[10px] font-bold transition ${status === opt ? badgeColors[opt] + ' ring-1 ring-slate-300' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}">
+                                                    ${opt}
+                                                </button>
+                                            `).join('')}
+                                        </div>
+                                    ` : `
+                                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeColors[status]}">${status}</span>
+                                    `}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 5. CHATBOX (DISKUSI KELAS REAL-TIME) ---
+        function renderChatboxView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-100 flex flex-col h-[65vh]">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-full bg-pink-500 text-white flex items-center justify-center">
+                                <i data-lucide="messages-square" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">Forum Diskusi Kelas 6</h3>
+                                <p class="text-[11px] text-emerald-600 font-medium">● Tersinkron Real-Time Guru & Siswa</p>
+                            </div>
+                        </div>
+                        ${isGuru ? `<button onclick="clearChatMessages()" class="text-[11px] text-rose-600 hover:underline font-semibold">Bersihkan Chat</button>` : ''}
+                    </div>
+
+                    <div id="chat-messages-box" class="flex-1 overflow-y-auto py-4 space-y-3">
+                        ${appState.data.messages.map(m => {
+                            const isTeacherMsg = m.role === 'guru';
+                            return `
+                                <div class="flex flex-col ${isTeacherMsg ? 'items-start' : 'items-end'}">
+                                    <span class="text-[10px] text-slate-400 mb-0.5 px-1">${m.sender} • ${m.time}</span>
+                                    <div class="max-w-[80%] px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed ${isTeacherMsg ? 'bg-indigo-50 text-slate-800 border border-indigo-100 rounded-tl-none' : 'bg-pink-600 text-white rounded-tr-none'}">
+                                        ${m.text}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <form onsubmit="sendChatMessage(event)" class="pt-3 border-t border-slate-100 flex gap-2">
+                        <input type="text" id="chat-input" required placeholder="Tulis pesan untuk kelas 6..." class="flex-1 text-xs bg-slate-100 rounded-xl px-3.5 py-2.5 outline-none focus:ring-2 focus:ring-pink-500">
+                        <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow">
+                            <i data-lucide="send" class="w-4 h-4"></i> Kirim
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        // --- 6. GRADESHEET (DAFTAR NILAI) ---
+        function renderGradesView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800">Daftar Nilai Kelas 6</h3>
+                            <p class="text-xs text-slate-500">${isGuru ? 'Klik tombol Edit Nilai pada siswa untuk memperbarui nilai di Cloud' : 'Rekap nilai mata pelajaran semester berjalan'}</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-[11px] text-slate-500 uppercase">
+                                    <th class="py-2.5 px-2">No</th>
+                                    <th class="py-2.5 px-2">Nama Siswa</th>
+                                    <th class="py-2.5 px-2 text-center">MTK</th>
+                                    <th class="py-2.5 px-2 text-center">B.Indo</th>
+                                    <th class="py-2.5 px-2 text-center">IPAS</th>
+                                    <th class="py-2.5 px-2 text-center">PPKn</th>
+                                    <th class="py-2.5 px-2 text-center">PAI</th>
+                                    <th class="py-2.5 px-2 text-center">Rata2</th>
+                                    ${isGuru ? `<th class="py-2.5 px-2 text-right">Edit</th>` : ''}
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${appState.data.students.map(s => {
+                                    const g = appState.data.grades[s.nis] || { mtk: 85, bindo: 86, ipas: 85, pkn: 88, pai: 90 };
+                                    const avg = ((Number(g.mtk) + Number(g.bindo) + Number(g.ipas) + Number(g.pkn) + Number(g.pai)) / 5).toFixed(1);
+                                    return `
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="py-2.5 px-2 font-semibold">${s.no}</td>
+                                            <td class="py-2.5 px-2 font-bold text-slate-800">${s.nama}</td>
+                                            <td class="py-2.5 px-2 text-center">${g.mtk}</td>
+                                            <td class="py-2.5 px-2 text-center">${g.bindo}</td>
+                                            <td class="py-2.5 px-2 text-center">${g.ipas}</td>
+                                            <td class="py-2.5 px-2 text-center">${g.pkn}</td>
+                                            <td class="py-2.5 px-2 text-center">${g.pai}</td>
+                                            <td class="py-2.5 px-2 text-center font-extrabold text-indigo-600">${avg}</td>
+                                            ${isGuru ? `
+                                                <td class="py-2.5 px-2 text-right">
+                                                    <button onclick="openGradeModal('${s.nis}')" class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg font-bold text-[11px]">
+                                                        Input
+                                                    </button>
+                                                </td>
+                                            ` : ''}
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 7. GALLERY (DOKUMENTASI KEGIATAN) ---
+        function renderGalleryView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800">Galeri Kegiatan Kelas 6</h3>
+                        ${isGuru ? `
+                            <button onclick="openGalleryModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Foto/Album
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${appState.data.gallery.map(item => `
+                            <div class="rounded-2xl overflow-hidden border border-slate-100 shadow-sm bg-slate-50 flex flex-col">
+                                <div class="h-36 bg-gradient-to-br ${item.color || 'from-indigo-500 to-purple-600'} p-4 flex flex-col justify-between text-white">
+                                    <div class="flex justify-between items-start">
+                                        <span class="text-[10px] bg-black/25 px-2.5 py-0.5 rounded-full">${item.date}</span>
+                                        ${isGuru ? `
+                                            <button onclick="deleteItem('gallery', '${item.id}')" class="p-1.5 bg-white/20 hover:bg-rose-500 rounded-lg transition">
+                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                    <i data-lucide="image" class="w-8 h-8 opacity-75"></i>
+                                </div>
+                                <div class="p-3.5">
+                                    <h4 class="text-sm font-bold text-slate-800">${item.title}</h4>
+                                    <p class="text-xs text-slate-500 mt-1">${item.desc}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 8. FEES DETAILS (KAS KELAS & TABUNGAN SISWA) ---
+        function renderFeesView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="mb-4">
+                        <h3 class="text-base font-bold text-slate-800">Administrasi Kas & Tabungan Kelas 6</h3>
+                        <p class="text-xs text-slate-500">Catatan kas kelas dan tabungan sukarela siswa SDN 1 Malebo</p>
+                    </div>
+                    <div class="divide-y divide-slate-100 text-xs">
+                        ${appState.data.students.map(s => {
+                            const f = appState.data.fees[s.nis] || { kasBulanIni: 'Lunas', saldoTabungan: 50000, keterangan: 'Aktif' };
+                            return `
+                                <div class="py-3 flex items-center justify-between gap-2">
+                                    <div>
+                                        <div class="font-bold text-slate-800">${s.no}. ${s.nama}</div>
+                                        <div class="text-[11px] text-slate-500">Tabungan: <span class="font-bold text-teal-700">Rp ${Number(f.saldoTabungan).toLocaleString('id-ID')}</span> • ${f.keterangan}</div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${f.kasBulanIni === 'Lunas' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                            Kas: ${f.kasBulanIni}
+                                        </span>
+                                        ${isGuru ? `
+                                            <button onclick="openFeeModal('${s.nis}')" class="p-1.5 bg-slate-100 hover:bg-indigo-100 text-indigo-700 rounded-lg">
+                                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 9. NOTICES (PENGUMUMAN TERBARU) ---
+        function renderNoticesView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800">Papan Pengumuman Kelas 6</h3>
+                        ${isGuru ? `
+                            <button onclick="openNoticeModal()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Buat Pengumuman
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="space-y-3">
+                        ${appState.data.notices.map(n => `
+                            <div class="p-4 rounded-2xl bg-purple-50/60 border border-purple-100">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${n.tag}</span>
+                                        <span class="text-[11px] text-slate-400">${n.date}</span>
+                                    </div>
+                                    ${isGuru ? `
+                                        <div class="flex gap-1">
+                                            <button onclick="openNoticeModal('${n.id}')" class="p-1 text-indigo-600 hover:bg-white rounded"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                                            <button onclick="deleteItem('notices', '${n.id}')" class="p-1 text-rose-600 hover:bg-white rounded"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-800">${n.title}</h4>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">${n.content}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 10. ASSIGNMENTS (TUGAS & PR KELAS) ---
+        function renderAssignmentsView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800">Daftar Tugas & Pekerjaan Rumah</h3>
+                        ${isGuru ? `
+                            <button onclick="openAssignmentModal()" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Tugas
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="space-y-3">
+                        ${appState.data.assignments.map(a => `
+                            <div class="p-4 rounded-2xl bg-orange-50/50 border border-orange-100">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[11px] font-bold text-orange-700 bg-orange-100 px-2.5 py-0.5 rounded-full">${a.subject}</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[11px] font-semibold text-rose-600">Batas: ${a.dueDate}</span>
+                                        ${isGuru ? `
+                                            <button onclick="openAssignmentModal('${a.id}')" class="p-1 text-indigo-600 hover:bg-white rounded"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                                            <button onclick="deleteItem('assignments', '${a.id}')" class="p-1 text-rose-600 hover:bg-white rounded"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-800 mt-1">${a.title}</h4>
+                                <p class="text-xs text-slate-600 mt-1">${a.desc}</p>
+                                ${renderAttachmentBadge(a.attachmentType, a.attachmentName, a.attachmentUrl)}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 11. EXAMS (JADWAL UJIAN) ---
+        function renderExamsView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800">Jadwal Ujian / Asesmen Kelas 6</h3>
+                        ${isGuru ? `
+                            <button onclick="openExamModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Jadwal
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="space-y-3">
+                        ${appState.data.exams.map(ex => `
+                            <div class="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100 flex items-start justify-between gap-2">
+                                <div class="flex-1">
+                                    <span class="text-[11px] font-bold text-emerald-700">${ex.date}</span>
+                                    <h4 class="text-sm font-bold text-slate-800 mt-0.5">${ex.subject}</h4>
+                                    <p class="text-xs text-slate-500 mt-0.5">Pukul ${ex.time} • ${ex.room}</p>
+                                    ${renderAttachmentBadge(ex.attachmentType, ex.attachmentName, ex.attachmentUrl)}
+                                </div>
+                                ${isGuru ? `
+                                    <div class="flex gap-1 shrink-0">
+                                        <button onclick="openExamModal('${ex.id}')" class="p-1.5 text-indigo-600 hover:bg-white rounded-lg"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                        <button onclick="deleteItem('exams', '${ex.id}')" class="p-1.5 text-rose-600 hover:bg-white rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    </div>
+                                ` : `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0"></i>`}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 12. LIBRARY (PERPUSTAKAAN DIGITAL) ---
+        function renderLibraryView() {
+            const isGuru = appState.role === 'guru';
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800">Perpustakaan & Bahan Ajar Digital</h3>
+                        ${isGuru ? `
+                            <button onclick="openLibraryModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Buku / File
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="space-y-3">
+                        ${appState.data.library.map(lib => {
+                            const fileUrl = lib.attachmentUrl || lib.link;
+                            const isFile = lib.attachmentType === 'file';
+                            return `
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-10 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                                            <i data-lucide="${isFile ? 'file-text' : 'book'}" class="w-5 h-5"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <span class="text-[10px] font-bold text-blue-600 uppercase">${lib.category} ${isFile ? '• FILE' : '• LINK'}</span>
+                                            <h4 class="text-sm font-bold text-slate-800 truncate">${lib.title}</h4>
+                                            <p class="text-[11px] text-slate-500 truncate">Penerbit: ${lib.author} ${lib.attachmentName ? `(${lib.attachmentName})` : ''}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        ${fileUrl ? `
+                                            <a href="${fileUrl}" ${isFile ? `download="${lib.attachmentName || 'dokumen'}"` : 'target="_blank" rel="noopener"'} class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1">
+                                                <i data-lucide="${isFile ? 'download' : 'external-link'}" class="w-3.5 h-3.5"></i> ${isFile ? 'Unduh' : 'Buka'}
+                                            </a>
+                                        ` : ''}
+                                        ${isGuru ? `
+                                            <button onclick="openLibraryModal('${lib.id}')" class="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg" title="Edit"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                            <button onclick="deleteItem('library', '${lib.id}')" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper for rendering attachment badge/button in Assignments & Exams
+        function renderAttachmentBadge(type, name, url) {
+            if (!type || type === 'none' || !url) return '';
+            const isFile = type === 'file';
+            const label = name || (isFile ? 'Lampiran File' : 'Buka Tautan Lampiran');
+            return `
+                <div class="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5 text-[11px] font-medium text-slate-600 truncate">
+                        <i data-lucide="${isFile ? 'paperclip' : 'link'}" class="w-3.5 h-3.5 text-indigo-600 shrink-0"></i>
+                        <span class="truncate">${label}</span>
+                    </div>
+                    <a href="${url}" ${isFile ? `download="${label}"` : 'target="_blank" rel="noopener"'} class="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-lg transition">
+                        <i data-lucide="${isFile ? 'download' : 'external-link'}" class="w-3 h-3"></i>
+                        ${isFile ? 'Unduh File' : 'Buka Link'}
+                    </a>
+                </div>
+            `;
+        }
+
+        // --- TEACHER CMS OVERVIEW ---
+        function renderTeacherCmsOverview() {
+            return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-1">Pusat Pengelolaan Konten Guru</h3>
+                    <p class="text-xs text-slate-500 mb-4">Pilih menu di bawah untuk langsung menambah, mengubah, atau menghapus data. Semua perubahan tersimpan permanen di Cloud.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        ${QUICK_MENUS.map(m => `
+                            <button onclick="navigateTo('${m.id}')" class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/40 transition text-left">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl ${m.iconBg} text-white flex items-center justify-center">
+                                        <i data-lucide="${m.icon}" class="w-4 h-4"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-800">Kelola ${m.title}</div>
+                                        <div class="text-[11px] text-slate-500">${m.subtitle}</div>
+                                    </div>
+                                </div>
+                                <i data-lucide="edit-3" class="w-4 h-4 text-indigo-600"></i>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 9. TEACHER CRUD MODALS & ACTIONS (CLOUD SYNCED)
+        // ==========================================
+
+        // Delete generic item from array
+        window.deleteItem = function(collectionKey, id) {
+            if (appState.role !== 'guru') return;
+            appState.data[collectionKey] = appState.data[collectionKey].filter(item => item.id !== id);
+            saveToCloud("Data berhasil dihapus & disinkronkan!");
+        };
+
+        // Delete Student
+        window.deleteStudent = function(nis) {
+            if (appState.role !== 'guru') return;
+            appState.data.students = appState.data.students.filter(s => s.nis !== nis);
+            // Re-number
+            appState.data.students.forEach((s, idx) => s.no = idx + 1);
+            saveToCloud("Data siswa dihapus dari sistem.");
+        };
+
+        // Student Add/Edit Modal
+        window.openStudentFormModal = function(nis = null) {
+            const existing = nis ? appState.data.students.find(s => s.nis === nis) : null;
+            const defaultNo = existing ? existing.no : appState.data.students.length + 1;
+            openModal(`
+                <form onsubmit="saveStudentForm(event, '${nis || ''}')" class="p-6 space-y-3">
+                    <h3 class="text-base font-bold text-slate-800">${existing ? 'Edit Data Siswa' : 'Tambah Siswa Baru'}</h3>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">No. Absen</label>
+                            <input type="number" min="1" id="st-no" required value="${defaultNo}" class="w-full mt-1 text-xs border border-slate-200 rounded-xl px-3 py-2">
+                        </div>
+                        <div class="col-span-3">
+                            <label class="text-xs font-semibold text-slate-600">Nama Lengkap</label>
+                            <input type="text" id="st-nama" required value="${existing ? existing.nama : ''}" class="w-full mt-1 text-xs border border-slate-200 rounded-xl px-3 py-2">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">NIS</label>
+                            <input type="text" id="st-nis" required value="${existing ? existing.nis : ''}" class="w-full mt-1 text-xs border border-slate-200 rounded-xl px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">NISN</label>
+                            <input type="text" id="st-nisn" required value="${existing ? existing.nisn : ''}" class="w-full mt-1 text-xs border border-slate-200 rounded-xl px-3 py-2">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Jenis Kelamin</label>
+                            <select id="st-jk" class="w-full mt-1 text-xs border border-slate-200 rounded-xl px-3 py-2">
+                                <option value="L" ${existing && existing.jk === 'L' ? 'selected' : ''}>Laki-laki (L)</option>
+                                <option value="P" ${existing && existing.jk === 'P' ? 'selected' : ''}>Perempuan (P)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Alamat</label>
+                            <input type="text" id="st-alamat" required value="${existing ? existing.alamat : 'Malebo'}" class="w-full mt-1 text-xs border border-slate-200 rounded-xl px-3 py-2">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Tempat, Tanggal Lahir</label>
+                        <input type="text" id="st-ttl" required value="${existing ? existing.ttl : 'Temanggung, '}" class="w-full mt-1 text-xs border border-slate-200 rounded-xl px-3 py-2">
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 rounded-xl">Simpan ke Cloud</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveStudentForm = function(e, oldNis) {
+            e.preventDefault();
+            const newNis = document.getElementById('st-nis').value.trim();
+            const payload = {
+                no: Number(document.getElementById('st-no').value) || 1,
+                nama: document.getElementById('st-nama').value.toUpperCase().trim(),
+                nis: newNis,
+                nisn: document.getElementById('st-nisn').value.trim(),
+                jk: document.getElementById('st-jk').value,
+                alamat: document.getElementById('st-alamat').value.trim(),
+                ttl: document.getElementById('st-ttl').value.trim()
+            };
+            if (oldNis) {
+                const idx = appState.data.students.findIndex(s => s.nis === oldNis);
+                if (idx !== -1) {
+                    appState.data.students[idx] = payload;
+                }
+                // Migrate grades & fees if NIS changed
+                if (oldNis !== newNis) {
+                    if (appState.data.grades[oldNis]) {
+                        appState.data.grades[newNis] = appState.data.grades[oldNis];
+                        delete appState.data.grades[oldNis];
+                    }
+                    if (appState.data.fees[oldNis]) {
+                        appState.data.fees[newNis] = appState.data.fees[oldNis];
+                        delete appState.data.fees[oldNis];
+                    }
+                }
+            } else {
+                appState.data.students.push(payload);
+            }
+            // Sort by attendance number
+            appState.data.students.sort((a, b) => a.no - b.no);
+            closeModal();
+            saveToCloud("Data siswa berhasil diperbarui!");
+        };
+
+        // Attendance Handlers
+        window.changeAttendanceDate = function(newDate) {
+            appState.selectedDate = newDate;
+            renderCurrentView();
+        };
+
+        window.setStudentAttendance = function(nis, status) {
+            if (appState.role !== 'guru') return;
+            const d = appState.selectedDate;
+            if (!appState.data.attendance[d]) appState.data.attendance[d] = {};
+            appState.data.attendance[d][nis] = status;
+            saveToCloud(`Presensi diperbarui (${status})`);
+        };
+
+        // Chatbox Handlers
+        window.sendChatMessage = function(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            appState.data.messages.push({
+                id: 'msg-' + Date.now(),
+                sender: appState.currentUser.name,
+                role: appState.role,
+                text: text,
+                time: timeStr
+            });
+            input.value = '';
+            saveToCloud("Pesan terkirim!");
+        };
+
+        window.clearChatMessages = function() {
+            if (appState.role !== 'guru') return;
+            appState.data.messages = [];
+            saveToCloud("Riwayat chat dibersihkan oleh Guru.");
+        };
+
+        // Grade Modal
+        window.openGradeModal = function(nis) {
+            const st = appState.data.students.find(s => s.nis === nis);
+            const g = appState.data.grades[nis] || { mtk: 85, bindo: 86, ipas: 85, pkn: 88, pai: 90 };
+            openModal(`
+                <form onsubmit="saveGrades(event, '${nis}')" class="p-6 space-y-3">
+                    <h3 class="text-base font-bold text-slate-800">Input Nilai: ${st.nama}</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-xs font-semibold">Matematika</label><input type="number" min="0" max="100" id="g-mtk" value="${g.mtk}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                        <div><label class="text-xs font-semibold">Bahasa Indonesia</label><input type="number" min="0" max="100" id="g-bindo" value="${g.bindo}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                        <div><label class="text-xs font-semibold">IPAS</label><input type="number" min="0" max="100" id="g-ipas" value="${g.ipas}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                        <div><label class="text-xs font-semibold">PPKn</label><input type="number" min="0" max="100" id="g-pkn" value="${g.pkn}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                        <div class="col-span-2"><label class="text-xs font-semibold">PAI & Budi Pekerti</label><input type="number" min="0" max="100" id="g-pai" value="${g.pai}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-indigo-600 text-white rounded-xl font-semibold">Simpan Nilai</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveGrades = function(e, nis) {
+            e.preventDefault();
+            appState.data.grades[nis] = {
+                mtk: Number(document.getElementById('g-mtk').value),
+                bindo: Number(document.getElementById('g-bindo').value),
+                ipas: Number(document.getElementById('g-ipas').value),
+                pkn: Number(document.getElementById('g-pkn').value),
+                pai: Number(document.getElementById('g-pai').value)
+            };
+            closeModal();
+            saveToCloud("Nilai siswa berhasil disimpan ke Cloud!");
+        };
+
+        // Events Modal
+        window.openEventModal = function(id = null) {
+            const ev = id ? appState.data.events.find(x => x.id === id) : null;
+            openModal(`
+                <form onsubmit="saveEvent(event, '${id || ''}')" class="p-6 space-y-3">
+                    <h3 class="text-base font-bold text-slate-800">${ev ? 'Edit Agenda' : 'Tambah Agenda Baru'}</h3>
+                    <div><label class="text-xs font-semibold">Judul Kegiatan</label><input type="text" id="ev-title" required value="${ev ? ev.title : ''}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label class="text-xs font-semibold">Bulan</label><input type="text" id="ev-month" required value="${ev ? ev.month : 'NOV'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                        <div><label class="text-xs font-semibold">Tanggal</label><input type="text" id="ev-day" required value="${ev ? ev.day : '28'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                        <div><label class="text-xs font-semibold">Hari</label><input type="text" id="ev-week" required value="${ev ? ev.weekday : 'Sab'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    </div>
+                    <div><label class="text-xs font-semibold">Waktu</label><input type="text" id="ev-time" required value="${ev ? ev.time : '08:00 - 11:00 WIB'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Lokasi</label><input type="text" id="ev-loc" required value="${ev ? ev.location : 'SD Negeri 1 Malebo'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-orange-500 text-white rounded-xl font-semibold">Simpan</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveEvent = function(e, id) {
+            e.preventDefault();
+            const obj = {
+                id: id || 'ev-' + Date.now(),
+                title: document.getElementById('ev-title').value,
+                month: document.getElementById('ev-month').value.toUpperCase(),
+                day: document.getElementById('ev-day').value,
+                weekday: document.getElementById('ev-week').value,
+                time: document.getElementById('ev-time').value,
+                location: document.getElementById('ev-loc').value,
+                status: 'Upcoming'
+            };
+            if (id) {
+                const i = appState.data.events.findIndex(x => x.id === id);
+                if (i !== -1) appState.data.events[i] = obj;
+            } else {
+                appState.data.events.unshift(obj);
+            }
+            closeModal();
+            saveToCloud("Agenda berhasil disimpan!");
+        };
+
+        // Staff Modal
+        window.openStaffModal = function(id = null) {
+            const st = id ? appState.data.staffs.find(x => x.id === id) : null;
+            openModal(`
+                <form onsubmit="saveStaff(event, '${id || ''}')" class="p-6 space-y-3">
+                    <h3 class="text-base font-bold text-slate-800">${st ? 'Edit Data Guru' : 'Tambah Data Guru'}</h3>
+                    <div><label class="text-xs font-semibold">Nama & Gelar</label><input type="text" id="sf-name" required value="${st ? st.name : ''}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Jabatan</label><input type="text" id="sf-role" required value="${st ? st.role : 'Guru Mapel'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Mata Pelajaran</label><input type="text" id="sf-sub" required value="${st ? st.subject : ''}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">No. HP / WA</label><input type="text" id="sf-phone" required value="${st ? st.phone : ''}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-blue-600 text-white rounded-xl font-semibold">Simpan</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveStaff = function(e, id) {
+            e.preventDefault();
+            const obj = {
+                id: id || 'st-' + Date.now(),
+                name: document.getElementById('sf-name').value,
+                role: document.getElementById('sf-role').value,
+                subject: document.getElementById('sf-sub').value,
+                phone: document.getElementById('sf-phone').value,
+                nip: '-'
+            };
+            if (id) {
+                const i = appState.data.staffs.findIndex(x => x.id === id);
+                if (i !== -1) appState.data.staffs[i] = obj;
+            } else {
+                appState.data.staffs.push(obj);
+            }
+            closeModal();
+            saveToCloud("Direktori guru diperbarui!");
+        };
+
+        // Gallery Modal
+        window.openGalleryModal = function() {
+            openModal(`
+                <form onsubmit="saveGallery(event)" class="p-6 space-y-3">
+                    <h3 class="text-base font-bold text-slate-800">Tambah Dokumentasi Kegiatan</h3>
+                    <div><label class="text-xs font-semibold">Judul Kegiatan</label><input type="text" id="gl-title" required class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Tanggal</label><input type="text" id="gl-date" required value="12 Nov 2026" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Deskripsi Singkat</label><textarea id="gl-desc" required rows="3" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></textarea></div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-blue-600 text-white rounded-xl font-semibold">Simpan</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveGallery = function(e) {
+            e.preventDefault();
+            appState.data.gallery.unshift({
+                id: 'gal-' + Date.now(),
+                title: document.getElementById('gl-title').value,
+                date: document.getElementById('gl-date').value,
+                desc: document.getElementById('gl-desc').value,
+                color: 'from-indigo-500 to-cyan-500'
+            });
+            closeModal();
+            saveToCloud("Dokumentasi berhasil ditambahkan!");
+        };
+
+        // Fee Modal
+        window.openFeeModal = function(nis) {
+            const st = appState.data.students.find(s => s.nis === nis);
+            const f = appState.data.fees[nis] || { kasBulanIni: 'Lunas', saldoTabungan: 50000, keterangan: 'Aktif' };
+            openModal(`
+                <form onsubmit="saveFee(event, '${nis}')" class="p-6 space-y-3">
+                    <h3 class="text-base font-bold text-slate-800">Kas & Tabungan: ${st.nama}</h3>
+                    <div>
+                        <label class="text-xs font-semibold">Status Kas Bulan Ini</label>
+                        <select id="fe-status" class="w-full mt-1 text-xs border rounded-xl px-3 py-2">
+                            <option value="Lunas" ${f.kasBulanIni === 'Lunas' ? 'selected' : ''}>Lunas</option>
+                            <option value="Belum Lunas" ${f.kasBulanIni !== 'Lunas' ? 'selected' : ''}>Belum Lunas</option>
+                        </select>
+                    </div>
+                    <div><label class="text-xs font-semibold">Saldo Tabungan (Rp)</label><input type="number" id="fe-saldo" required value="${f.saldoTabungan}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Keterangan</label><input type="text" id="fe-ket" required value="${f.keterangan}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-teal-600 text-white rounded-xl font-semibold">Simpan</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveFee = function(e, nis) {
+            e.preventDefault();
+            appState.data.fees[nis] = {
+                kasBulanIni: document.getElementById('fe-status').value,
+                saldoTabungan: Number(document.getElementById('fe-saldo').value),
+                keterangan: document.getElementById('fe-ket').value
+            };
+            closeModal();
+            saveToCloud("Catatan kas & tabungan diperbarui!");
+        };
+
+        // Notice Modal
+        window.openNoticeModal = function(id = null) {
+            const n = id ? appState.data.notices.find(x => x.id === id) : null;
+            openModal(`
+                <form onsubmit="saveNotice(event, '${id || ''}')" class="p-6 space-y-3">
+                    <h3 class="text-base font-bold text-slate-800">${n ? 'Edit Pengumuman' : 'Buat Pengumuman Baru'}</h3>
+                    <div><label class="text-xs font-semibold">Judul Pengumuman</label><input type="text" id="nt-title" required value="${n ? n.title : ''}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Label</label><input type="text" id="nt-tag" required value="${n ? n.tag : 'BARU'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Isi Pengumuman</label><textarea id="nt-content" required rows="3" class="w-full mt-1 text-xs border rounded-xl px-3 py-2">${n ? n.content : ''}</textarea></div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-purple-600 text-white rounded-xl font-semibold">Terbitkan</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveNotice = function(e, id) {
+            e.preventDefault();
+            const obj = {
+                id: id || 'not-' + Date.now(),
+                title: document.getElementById('nt-title').value,
+                tag: document.getElementById('nt-tag').value.toUpperCase(),
+                content: document.getElementById('nt-content').value,
+                date: '12 Nov 2026'
+            };
+            if (id) {
+                const i = appState.data.notices.findIndex(x => x.id === id);
+                if (i !== -1) appState.data.notices[i] = obj;
+            } else {
+                appState.data.notices.unshift(obj);
+            }
+            closeModal();
+            saveToCloud("Pengumuman diterbitkan ke perangkat siswa!");
+        };
+
+        // Assignment Modal
+        window.openAssignmentModal = function(id = null) {
+            const a = id ? appState.data.assignments.find(x => x.id === id) : null;
+            const attType = a && a.attachmentType ? a.attachmentType : 'none';
+            openModal(`
+                <form onsubmit="saveAssignment(event, '${id || ''}')" class="p-6 space-y-3 max-h-[85vh] overflow-y-auto">
+                    <h3 class="text-base font-bold text-slate-800">${a ? 'Edit Tugas' : 'Tambah Tugas Kelas 6'}</h3>
+                    <div><label class="text-xs font-semibold">Mata Pelajaran</label><input type="text" id="as-sub" required value="${a ? a.subject : 'Matematika'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Judul Tugas</label><input type="text" id="as-title" required value="${a ? a.title : ''}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Batas Pengumpulan</label><input type="text" id="as-due" required value="${a ? a.dueDate : '20 Nov 2026'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Instruksi Tugas</label><textarea id="as-desc" required rows="2" class="w-full mt-1 text-xs border rounded-xl px-3 py-2">${a ? a.desc : ''}</textarea></div>
+                    ${renderAttachmentFormFields(attType, a ? a.attachmentName : '', a ? a.attachmentUrl : '')}
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-orange-600 text-white rounded-xl font-semibold">Simpan Tugas</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveAssignment = async function(e, id) {
+            e.preventDefault();
+            const existing = id ? appState.data.assignments.find(x => x.id === id) : null;
+            const att = await extractAttachmentData(existing);
+            if (!att) return;
+            const obj = {
+                id: id || 'asg-' + Date.now(),
+                subject: document.getElementById('as-sub').value,
+                title: document.getElementById('as-title').value,
+                dueDate: document.getElementById('as-due').value,
+                desc: document.getElementById('as-desc').value,
+                status: 'Aktif',
+                ...att
+            };
+            if (id) {
+                const i = appState.data.assignments.findIndex(x => x.id === id);
+                if (i !== -1) appState.data.assignments[i] = obj;
+            } else {
+                appState.data.assignments.unshift(obj);
+            }
+            closeModal();
+            saveToCloud("Tugas & lampiran berhasil disimpan!");
+        };
+
+        // Exam Modal
+        window.openExamModal = function(id = null) {
+            const ex = id ? appState.data.exams.find(x => x.id === id) : null;
+            const attType = ex && ex.attachmentType ? ex.attachmentType : 'none';
+            openModal(`
+                <form onsubmit="saveExam(event, '${id || ''}')" class="p-6 space-y-3 max-h-[85vh] overflow-y-auto">
+                    <h3 class="text-base font-bold text-slate-800">${ex ? 'Edit Jadwal Ujian' : 'Tambah Jadwal Ujian'}</h3>
+                    <div><label class="text-xs font-semibold">Mata Pelajaran</label><input type="text" id="ex-sub" required value="${ex ? ex.subject : ''}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div><label class="text-xs font-semibold">Hari & Tanggal</label><input type="text" id="ex-date" required value="${ex ? ex.date : 'Jumat, 11 Des 2026'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="text-xs font-semibold">Waktu</label><input type="text" id="ex-time" required value="${ex ? ex.time : '07:30 - 09:30'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                        <div><label class="text-xs font-semibold">Ruang</label><input type="text" id="ex-room" required value="${ex ? ex.room : 'Ruang Kelas 6'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    </div>
+                    ${renderAttachmentFormFields(attType, ex ? ex.attachmentName : '', ex ? ex.attachmentUrl : '')}
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-emerald-600 text-white rounded-xl font-semibold">Simpan</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveExam = async function(e, id) {
+            e.preventDefault();
+            const existing = id ? appState.data.exams.find(x => x.id === id) : null;
+            const att = await extractAttachmentData(existing);
+            if (!att) return;
+            const obj = {
+                id: id || 'ex-' + Date.now(),
+                subject: document.getElementById('ex-sub').value,
+                date: document.getElementById('ex-date').value,
+                time: document.getElementById('ex-time').value,
+                room: document.getElementById('ex-room').value,
+                ...att
+            };
+            if (id) {
+                const i = appState.data.exams.findIndex(x => x.id === id);
+                if (i !== -1) appState.data.exams[i] = obj;
+            } else {
+                appState.data.exams.push(obj);
+            }
+            closeModal();
+            saveToCloud("Jadwal ujian & lampiran diperbarui!");
+        };
+
+        // Library Modal
+        window.openLibraryModal = function(id = null) {
+            const lib = id ? appState.data.library.find(x => x.id === id) : null;
+            const attType = lib ? (lib.attachmentType || 'link') : 'link';
+            const existingUrl = lib ? (lib.attachmentUrl || lib.link || '') : '';
+            openModal(`
+                <form onsubmit="saveLibrary(event, '${id || ''}')" class="p-6 space-y-3 max-h-[85vh] overflow-y-auto">
+                    <h3 class="text-base font-bold text-slate-800">${lib ? 'Edit Buku / Bahan Ajar' : 'Tambah Buku / Bahan Ajar'}</h3>
+                    <div><label class="text-xs font-semibold">Judul Buku / Materi</label><input type="text" id="lb-title" required value="${lib ? lib.title : ''}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="text-xs font-semibold">Kategori</label><input type="text" id="lb-cat" required value="${lib ? lib.category : 'Modul Belajar'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                        <div><label class="text-xs font-semibold">Penerbit / Penulis</label><input type="text" id="lb-auth" required value="${lib ? lib.author : 'SDN 1 Malebo'}" class="w-full mt-1 text-xs border rounded-xl px-3 py-2"></div>
+                    </div>
+                    ${renderAttachmentFormFields(attType, lib ? lib.attachmentName : '', existingUrl, true)}
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs bg-slate-100 rounded-xl font-semibold">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-xs bg-blue-600 text-white rounded-xl font-semibold">Simpan</button>
+                    </div>
+                </form>
+            `);
+        };
+
+        window.saveLibrary = async function(e, id) {
+            e.preventDefault();
+            const existing = id ? appState.data.library.find(x => x.id === id) : null;
+            const att = await extractAttachmentData(existing);
+            if (!att) return;
+            const obj = {
+                id: id || 'lib-' + Date.now(),
+                title: document.getElementById('lb-title').value,
+                category: document.getElementById('lb-cat').value,
+                author: document.getElementById('lb-auth').value,
+                link: att.attachmentUrl || '',
+                ...att
+            };
+            if (id) {
+                const i = appState.data.library.findIndex(x => x.id === id);
+                if (i !== -1) appState.data.library[i] = obj;
+            } else {
+                appState.data.library.unshift(obj);
+            }
+            closeModal();
+            saveToCloud("Perpustakaan & lampiran diperbarui!");
+        };
+
+        // Shared Attachment Form Helper (Supports Local File Upload or External Link)
+        function renderAttachmentFormFields(type = 'none', name = '', url = '', hideNone = false) {
+            const safeUrl = type === 'link' ? url : '';
+            return `
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                            <i data-lucide="paperclip" class="w-3.5 h-3.5 text-indigo-600"></i> Lampiran (File / Link)
+                        </label>
+                        <select id="att-type" onchange="toggleAttachmentInputs(this.value)" class="text-[11px] font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1 outline-none">
+                            ${!hideNone ? `<option value="none" ${type === 'none' ? 'selected' : ''}>Tanpa Lampiran</option>` : ''}
+                            <option value="link" ${type === 'link' ? 'selected' : ''}>Tautan / Link URL</option>
+                            <option value="file" ${type === 'file' ? 'selected' : ''}>File dari Perangkat</option>
+                        </select>
+                    </div>
+
+                    <div id="att-link-box" class="${type === 'link' ? '' : 'hidden'} space-y-2">
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-600">Nama Tautan (Opsional)</label>
+                            <input type="text" id="att-link-name" value="${type === 'link' ? name : ''}" placeholder="Contoh: Soal Latihan PDF" class="w-full mt-0.5 text-xs bg-white border border-slate-200 rounded-xl px-3 py-1.5">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-600">URL / Link</label>
+                            <input type="url" id="att-link-url" value="${safeUrl}" placeholder="https://..." class="w-full mt-0.5 text-xs bg-white border border-slate-200 rounded-xl px-3 py-1.5">
+                        </div>
+                    </div>
+
+                    <div id="att-file-box" class="${type === 'file' ? '' : 'hidden'} space-y-1.5">
+                        <label class="text-[11px] font-semibold text-slate-600 block">Pilih File dari Perangkat (Maks. 700 KB agar tersimpan di Cloud)</label>
+                        <input type="file" id="att-file-input" class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200">
+                        ${type === 'file' && name ? `<p class="text-[11px] text-emerald-700 font-medium">File saat ini: ${name} (biarkan kosong jika tidak diganti)</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.toggleAttachmentInputs = function(val) {
+            const linkBox = document.getElementById('att-link-box');
+            const fileBox = document.getElementById('att-file-box');
+            if (linkBox) linkBox.classList.toggle('hidden', val !== 'link');
+            if (fileBox) fileBox.classList.toggle('hidden', val !== 'file');
+        };
+
+        async function extractAttachmentData(existingItem) {
+            const typeEl = document.getElementById('att-type');
+            if (!typeEl) return { attachmentType: 'none', attachmentName: '', attachmentUrl: '' };
+            const type = typeEl.value;
+
+            if (type === 'none') {
+                return { attachmentType: 'none', attachmentName: '', attachmentUrl: '' };
+            }
+            if (type === 'link') {
+                const url = document.getElementById('att-link-url').value.trim();
+                const name = document.getElementById('att-link-name').value.trim() || url;
+                if (!url) {
+                    showToast("Masukkan URL tautan lampiran terlebih dahulu!", "error");
+                    return null;
+                }
+                return { attachmentType: 'link', attachmentName: name, attachmentUrl: url };
+            }
+            if (type === 'file') {
+                const fileInput = document.getElementById('att-file-input');
+                const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+                if (!file) {
+                    if (existingItem && existingItem.attachmentType === 'file' && existingItem.attachmentUrl) {
+                        return {
+                            attachmentType: 'file',
+                            attachmentName: existingItem.attachmentName,
+                            attachmentUrl: existingItem.attachmentUrl
+                        };
+                    }
+                    showToast("Silakan pilih file dari perangkat terlebih dahulu!", "error");
+                    return null;
+                }
+                if (file.size > 700 * 1024) {
+                    showToast("Ukuran file maksimal 700 KB agar dapat disinkronkan ke Cloud!", "error");
+                    return null;
+                }
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        resolve({
+                            attachmentType: 'file',
+                            attachmentName: file.name,
+                            attachmentUrl: reader.result
+                        });
+                    };
+                    reader.onerror = () => {
+                        showToast("Gagal membaca file dari perangkat.", "error");
+                        resolve(null);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            return { attachmentType: 'none', attachmentName: '', attachmentUrl: '' };
+        }
+
+        // ==========================================
+        // 10. MODAL & TOAST UTILITIES
+        // ==========================================
+        function openModal(innerHtml) {
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            content.innerHTML = innerHtml;
+            overlay.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        window.closeModal = function() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+        };
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-emerald-600 text-white',
+                error: 'bg-rose-600 text-white',
+                info: 'bg-slate-800 text-white'
+            };
+            toast.className = `${colors[type] || colors.info} px-4 py-2.5 rounded-2xl shadow-lg text-xs font-semibold flex items-center gap-2 transform transition-all duration-300 translate-y-0 opacity-100`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+
+        // ==========================================
+        // 11. BOOTSTRAP APPLICATION
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            updateHeaderUI();
+            renderCurrentView();
+            initCloudSync();
+            window.addEventListener('online', () => { cloudRetry = 0; initCloudSync(); });
+            document.addEventListener('visibilitychange', () => { if (!document.hidden && !appState.isCloudReady) { cloudRetry = 0; initCloudSync(); } });
+        });
+    </script>
+</body>
+</html>
